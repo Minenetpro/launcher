@@ -1,22 +1,25 @@
 <template>
   <v-card
     class="w-full"
-    :color="cardColor"
-    outlined
     :style="{
       borderColor: refreshing ? 'white' : '',
-      'backdrop-filter': `blur(${blurCard}px)`,
+      'backdrop-filter': `blur(10px)`,
     }"
   >
     <v-btn
-      v-shared-tooltip="_ => randomPlayScreenshot ? t('screenshots.playRandom') : t('screenshots.playSequence')"
+      v-shared-tooltip="
+        (_) =>
+          randomPlayScreenshot
+            ? t('screenshots.playRandom')
+            : t('screenshots.playSequence')
+      "
       text
       icon
       class="z-6 absolute bottom-2 right-2"
       @click="randomPlayScreenshot = !randomPlayScreenshot"
     >
       <v-icon>
-        {{ randomPlayScreenshot ? 'shuffle' : 'repeat' }}
+        {{ randomPlayScreenshot ? "shuffle" : "repeat" }}
       </v-icon>
     </v-btn>
     <v-carousel
@@ -39,31 +42,21 @@
           <div
             class="flex h-full items-end justify-center pb-4 opacity-0 transition-opacity hover:opacity-100"
           >
-            <v-btn
-              text
-              icon
-              @click.stop="onOpen(i)"
-            >
-              <v-icon>
-                folder
-              </v-icon>
+            <v-btn text icon @click.stop="onOpen(i)">
+              <v-icon> folder </v-icon>
               <!-- {{ t('screenshots.goto') }} -->
             </v-btn>
           </div>
         </v-carousel-item>
       </template>
       <template v-else>
-        <v-carousel-item
-          :key="-1"
-        >
+        <v-carousel-item :key="-1">
           <v-sheet
             color="transparent"
             class="flex h-full items-center justify-center"
           >
-            <v-icon left>
-              image
-            </v-icon>
-            {{ t('screenshots.empty') }}
+            <v-icon left> image </v-icon>
+            {{ t("screenshots.empty") }}
           </v-sheet>
         </v-carousel-item>
       </template>
@@ -72,53 +65,73 @@
   </v-card>
 </template>
 <script lang="ts" setup>
-import { useRefreshable, useService } from '@/composables'
-import { useLocalStorageCacheBool } from '@/composables/cache'
-import { kImageDialog } from '@/composables/imageDialog'
-import { kTheme } from '@/composables/theme'
-import { vSharedTooltip } from '@/directives/sharedTooltip'
-import { injection } from '@/util/inject'
-import { Instance } from '@xmcl/instance'
-import { InstanceScreenshotServiceKey, LaunchServiceKey } from '@xmcl/runtime-api'
+import { useRefreshable, useService } from "@/composables";
+import { useLocalStorageCacheBool } from "@/composables/cache";
+import { kImageDialog } from "@/composables/imageDialog";
+import { kTheme } from "@/composables/theme";
+import { vSharedTooltip } from "@/directives/sharedTooltip";
+import { injection } from "@/util/inject";
+import { Instance } from "@xmcl/instance";
+import {
+  InstanceScreenshotServiceKey,
+  LaunchServiceKey,
+} from "@xmcl/runtime-api";
 
-const props = defineProps<{ instance: Instance; height: number }>()
+const props = defineProps<{ instance: Instance; height: number }>();
 
-const { cardColor, blurCard } = injection(kTheme)
+const { cardColor, blurCard } = injection(kTheme);
 
-const { getScreenshots, showScreenshot } = useService(InstanceScreenshotServiceKey)
-const { on } = useService(LaunchServiceKey)
-const randomPlayScreenshot = useLocalStorageCacheBool('randomPlayScreenshot', false)
+const { getScreenshots, showScreenshot } = useService(
+  InstanceScreenshotServiceKey
+);
+const { on } = useService(LaunchServiceKey);
+const randomPlayScreenshot = useLocalStorageCacheBool(
+  "randomPlayScreenshot",
+  false
+);
 
-const urls = shallowRef([] as string[])
-const shuffled = computed(() => urls.value.toSorted(() => Math.random() - 0.5))
-const display = computed(() => (randomPlayScreenshot.value ? shuffled.value : urls.value))
+const urls = shallowRef([] as string[]);
+const shuffled = computed(() => urls.value.toSorted(() => Math.random() - 0.5));
+const display = computed(() =>
+  randomPlayScreenshot.value ? shuffled.value : urls.value
+);
 const { refresh, refreshing } = useRefreshable(async () => {
-  const result = await getScreenshots(props.instance.path)
+  const result = await getScreenshots(props.instance.path);
   if (result.length === 0) {
-    urls.value = []
+    urls.value = [];
   } else {
-    urls.value = result
+    urls.value = result;
   }
-})
+});
 
-on('minecraft-exit', () => refresh())
+on("minecraft-exit", () => refresh());
 
-const imageDialog = injection(kImageDialog)
+const imageDialog = injection(kImageDialog);
 
 const show = (uri: string) => {
-  if (!uri) return
-  imageDialog.show(uri)
-}
+  if (!uri) return;
+  imageDialog.show(uri);
+};
 
-onMounted(refresh)
+onMounted(refresh);
 
-watch(() => props.instance, () => {
-  refresh()
-})
+watch(
+  () => props.instance,
+  () => {
+    refresh();
+  }
+);
 
 const onOpen = (uri: string) => {
-  showScreenshot(uri)
-}
+  showScreenshot(uri);
+};
 
-const { t } = useI18n()
+const { t } = useI18n();
 </script>
+
+<style scoped>
+.v-card {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+}
+</style>

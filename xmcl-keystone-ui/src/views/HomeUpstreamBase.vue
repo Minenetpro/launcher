@@ -10,9 +10,7 @@
         marginTop: `${-offsetTop}px`,
       }"
     >
-      <template
-        v-for="row of virtualizer.getVirtualItems()"
-      >
+      <template v-for="row of virtualizer.getVirtualItems()">
         <v-subheader
           v-if="row.index === 0"
           :key="'currentVersion' + row.index"
@@ -24,16 +22,10 @@
             top: 0,
             left: 0,
             width: '100%',
-            transform: `translateY(${row.start}px)`
+            transform: `translateY(${row.start}px)`,
           }"
         >
-          {{ t('modrinthCard.currentVersion') }}
-          <div class="flex-grow" />
-          <v-switch
-            v-model="_only"
-            dense
-            :label="t('upstream.onlyShowCurrentVersion')"
-          />
+          {{ t("modrinthCard.currentVersion") }}
         </v-subheader>
         <v-subheader
           v-else-if="isHeader(row.index)"
@@ -46,7 +38,7 @@
             top: 0,
             left: 0,
             width: '100%',
-            transform: `translateY(${row.start}px)`
+            transform: `translateY(${row.start}px)`,
           }"
         >
           {{ getHeader(row.index) }}
@@ -62,7 +54,7 @@
             paddingTop: getItemPaddingTop(row.index),
             left: 0,
             width: '100%',
-            transform: `translateY(${row.start}px)`
+            transform: `translateY(${row.start}px)`,
           }"
         >
           <HomeUpstreamVersion
@@ -70,8 +62,11 @@
             :version="getItemVersion(row.index)"
             :updating="updating"
             :duplicating="duplicating"
-            :outlined="true"
-            :no-action="row.index === 1 || currentVersion?.id === getItemVersion(row.index).id"
+            :outlined="false"
+            :no-action="
+              row.index === 1 ||
+              currentVersion?.id === getItemVersion(row.index).id
+            "
             :downgrade="isItemDowngrade(row.index)"
             @changelog="$emit('changelog', getItemVersion(row.index))"
             @update="$emit('update', getItemVersion(row.index))"
@@ -90,136 +85,157 @@
       class="lg:(col-span-3 row-start-auto) col-span-9 row-start-1"
     >
       <v-subheader class="px-1">
-        {{ header?.type === 'modrinth' ? 'Modrinth' : header?.type === 'curseforge' ? 'Curseforge' : 'FTB' }}
+        {{
+          header?.type === "modrinth"
+            ? "Modrinth"
+            : header?.type === "curseforge"
+            ? "Curseforge"
+            : "FTB"
+        }}
       </v-subheader>
-      <HomeUpstreamHeader
-        :value="header"
-      />
+      <HomeUpstreamHeader :value="header" />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { useVModel } from '@vueuse/core'
-import HomeUpstreamHeader, { UpstreamHeaderProps } from './HomeUpstreamHeader.vue'
-import HomeUpstreamVersion, { ProjectVersionProps } from './HomeUpstreamVersion.vue'
-import { useVirtualizer, VirtualizerOptions } from '@tanstack/vue-virtual'
-import { getEl } from '@/util/el'
-import { injection } from '@/util/inject'
-import { kTheme } from '@/composables/theme'
+import { useVModel } from "@vueuse/core";
+import HomeUpstreamHeader, {
+  UpstreamHeaderProps,
+} from "./HomeUpstreamHeader.vue";
+import HomeUpstreamVersion, {
+  ProjectVersionProps,
+} from "./HomeUpstreamVersion.vue";
+import { useVirtualizer, VirtualizerOptions } from "@tanstack/vue-virtual";
+import { getEl } from "@/util/el";
+import { injection } from "@/util/inject";
+import { kTheme } from "@/composables/theme";
 
 const props = defineProps<{
-  duplicating?: boolean
-  updating?: boolean
-  loading?: boolean
-  items: Record<string, ProjectVersionProps[]>
-  currentVersion?: ProjectVersionProps
-  header?: UpstreamHeaderProps
-  onlyCurrentVersion?: boolean
-}>()
+  duplicating?: boolean;
+  updating?: boolean;
+  loading?: boolean;
+  items: Record<string, ProjectVersionProps[]>;
+  currentVersion?: ProjectVersionProps;
+  header?: UpstreamHeaderProps;
+  onlyCurrentVersion?: boolean;
+}>();
 
-const emit = defineEmits(['update', 'duplicate', 'changelog', 'update:onlyCurrentVersion'])
+const emit = defineEmits([
+  "update",
+  "duplicate",
+  "changelog",
+  "update:onlyCurrentVersion",
+]);
 
-const { t } = useI18n()
-const _only = useVModel(props, 'onlyCurrentVersion', emit)
+const { t } = useI18n();
+const _only = useVModel(props, "onlyCurrentVersion", emit);
 const isDowngrade = (current: string, target: string) => {
-  const da = new Date(current)
-  const db = new Date(target)
-  return da > db
-}
+  const da = new Date(current);
+  const db = new Date(target);
+  return da > db;
+};
 
 // virtual scroll
 const listItems = computed(() => {
   if (!props.currentVersion) {
-    return []
+    return [];
   }
-  const items = props.items
-  const results = [
-    '',
-    props.currentVersion,
-  ] as (ProjectVersionProps | string)[]
+  const items = props.items;
+  const results = ["", props.currentVersion] as (
+    | ProjectVersionProps
+    | string
+  )[];
   for (const [date, versions] of Object.entries(items)) {
-    results.push(date)
-    results.push(...versions.filter(v => !!v))
+    results.push(date);
+    results.push(...versions.filter((v) => !!v));
   }
-  return results
-})
-const scrollElement = inject('scrollElement', ref(null as HTMLElement | null))
-const offsetTop = ref(0)
-const containerRef = ref(null as HTMLElement | null)
-const virtualizerOptions = computed(() => ({
-  count: props.loading ? 10 : listItems.value.length,
-  getScrollElement: () => getEl(scrollElement.value) as any,
-  paddingStart: offsetTop.value,
-  overscan: 5,
-  estimateSize,
-} satisfies Partial<VirtualizerOptions<HTMLElement, HTMLElement>>))
+  return results;
+});
+const scrollElement = inject("scrollElement", ref(null as HTMLElement | null));
+const offsetTop = ref(0);
+const containerRef = ref(null as HTMLElement | null);
+const virtualizerOptions = computed(
+  () =>
+    ({
+      count: props.loading ? 10 : listItems.value.length,
+      getScrollElement: () => getEl(scrollElement.value) as any,
+      paddingStart: offsetTop.value,
+      overscan: 5,
+      estimateSize,
+    } satisfies Partial<VirtualizerOptions<HTMLElement, HTMLElement>>)
+);
 
-watch(containerRef, container => {
+watch(containerRef, (container) => {
   if (container) {
-    nextTick().then(() => { offsetTop.value = container.offsetTop })
+    nextTick().then(() => {
+      offsetTop.value = container.offsetTop;
+    });
   }
-})
-const virtualizer = useVirtualizer(virtualizerOptions)
+});
+const virtualizer = useVirtualizer(virtualizerOptions);
 
 function estimateSize(i: number) {
-  if (typeof listItems.value[i] === 'string') {
-    return 48
+  if (typeof listItems.value[i] === "string") {
+    return 48;
   }
-  const item = listItems.value[i] as ProjectVersionProps
+  const item = listItems.value[i] as ProjectVersionProps;
   if (!item) {
-    return 48
+    return 48;
   }
-  const changelogHtml = item.changelog
+  const changelogHtml = item.changelog;
   // estimate the height of the changelog by counting how many div and li inside
-  const divCount = (changelogHtml.match(/<div/g) || []).length
-  const liCount = (changelogHtml.match(/<li/g) || []).length
-  return Math.min(650, 48 + divCount * 24 + liCount * 24)
+  const divCount = (changelogHtml.match(/<div/g) || []).length;
+  const liCount = (changelogHtml.match(/<li/g) || []).length;
+  return Math.min(650, 48 + divCount * 24 + liCount * 24);
 }
 function isHeader(index: number) {
-  return typeof listItems.value[index] === 'string'
+  return typeof listItems.value[index] === "string";
 }
 function getHeader(index: number) {
-  return listItems.value[index] as string
+  return listItems.value[index] as string;
 }
 function getItemKey(index: number) {
-  const item = listItems.value[index]
-  if (typeof item === 'string') {
-    return item + _only.value
+  const item = listItems.value[index];
+  if (typeof item === "string") {
+    return item + _only.value;
   }
   if (!item) {
-    return '-1'
+    return "-1";
   }
-  return item.id + _only.value
+  return item.id + _only.value;
 }
 function getItemPaddingTop(index: number) {
-  if (typeof listItems.value[index - 1] !== 'string') {
-    return '0.5rem'
+  if (typeof listItems.value[index - 1] !== "string") {
+    return "0.5rem";
   }
-  return ''
+  return "";
 }
 function getItemVersion(index: number) {
-  const item = listItems.value[index]
-  if (typeof item === 'string') {
-    throw new Error()
+  const item = listItems.value[index];
+  if (typeof item === "string") {
+    throw new Error();
   }
-  return item
+  return item;
 }
 function isItemDowngrade(index: number) {
-  const item = listItems.value[index]
-  if (typeof item === 'string') {
-    return false
+  const item = listItems.value[index];
+  if (typeof item === "string") {
+    return false;
   }
-  return isDowngrade(props.currentVersion?.datePublished ?? '', item.datePublished)
+  return isDowngrade(
+    props.currentVersion?.datePublished ?? "",
+    item.datePublished
+  );
 }
 const measureElement = (el: any) => {
-  if (!el) return
-  if ('$el' in el) {
-    el = el.$el
+  if (!el) return;
+  if ("$el" in el) {
+    el = el.$el;
   }
-  virtualizer.value.measureElement(el)
-}
+  virtualizer.value.measureElement(el);
+};
 watch(_only, () => {
-  virtualizer.value.scrollToIndex(0)
-  offsetTop.value = 0
-})
+  virtualizer.value.scrollToIndex(0);
+  offsetTop.value = 0;
+});
 </script>

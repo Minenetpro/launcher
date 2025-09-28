@@ -25,23 +25,18 @@
       >
         <span
           :style="{
-            fontSize: headerFontSize
+            fontSize: headerFontSize,
           }"
           class="overflow-hidden overflow-ellipsis whitespace-nowrap transition-all"
-        >{{ name || `Minecraft ${version.minecraft}` }}</span>
+          >{{ name || `Minecraft ${version.minecraft}` }}</span
+        >
         <router-view name="route" />
         <div class="flex-grow" />
-        <transition
-          name="slide-x-transition"
-          mode="out-in"
-        >
+        <transition name="slide-x-transition" mode="out-in">
           <router-view name="actions" />
         </transition>
       </div>
-      <transition
-        name="slide-y-reverse-transition"
-        mode="out-in"
-      >
+      <transition name="slide-y-reverse-transition" mode="out-in">
         <router-view
           name="extensions"
           class="px-4"
@@ -55,10 +50,13 @@
     <div
       v-if="dragover"
       class="w-full h-full flex top-0 p-5"
-      style="position: absolute;"
+      style="position: absolute"
       @dragenter="overcount++"
       @dragleave="overcount--"
-      @drop="overcount = 0; onDropModpack($event)"
+      @drop="
+        overcount = 0;
+        onDropModpack($event);
+      "
     >
       <Hint
         :text="t('modpack.dropHint')"
@@ -70,70 +68,69 @@
           'darken-2': overcount > 0,
         }"
         :style="{
-          transform: overcount > 0 ? 'scale(1.0125)' : ''
+          transform: overcount > 0 ? 'scale(1.0125)' : '',
         }"
       />
     </div>
   </div>
 </template>
 
-<script lang=ts setup>
-import Hint from '@/components/Hint.vue'
-import { useDialog } from '@/composables/dialog'
-import { kDropHandler } from '@/composables/dropHandler'
-import { kInstance } from '@/composables/instance'
-import { AddInstanceDialogKey } from '@/composables/instanceTemplates'
-import { kInstanceVersion } from '@/composables/instanceVersion'
-import { kCompact } from '@/composables/scrollTop'
-import { kTheme } from '@/composables/theme'
-import { useInFocusMode } from '@/composables/uiLayout'
-import { injection } from '@/util/inject'
+<script lang="ts" setup>
+import Hint from "@/components/Hint.vue";
+import { useDialog } from "@/composables/dialog";
+import { kDropHandler } from "@/composables/dropHandler";
+import { kInstance } from "@/composables/instance";
+import { AddInstanceDialogKey } from "@/composables/instanceTemplates";
+import { kInstanceVersion } from "@/composables/instanceVersion";
+import { kCompact } from "@/composables/scrollTop";
+import { kTheme } from "@/composables/theme";
+import { useInFocusMode } from "@/composables/uiLayout";
+import { injection } from "@/util/inject";
 
-const { name, runtime: version } = injection(kInstance)
-const isInFocusMode = useInFocusMode()
-const { blurAppBar } = injection(kTheme)
-const { t } = useI18n()
+const { name, runtime: version } = injection(kInstance);
+const isInFocusMode = useInFocusMode();
+const { blurAppBar } = injection(kTheme);
+const { t } = useI18n();
 
-const transitioning = ref(false)
-provide('transitioning', transitioning)
+const transitioning = ref(false);
+provide("transitioning", transitioning);
 
 const onTransitionStart = (e: TransitionEvent) => {
-  if (e.propertyName !== 'transform') return
-  transitioning.value = true
-}
+  if (e.propertyName !== "transform") return;
+  transitioning.value = true;
+};
 const onTransitionEnd = (e: TransitionEvent) => {
-  if (e.propertyName !== 'transform') return
-  transitioning.value = false
-}
+  if (e.propertyName !== "transform") return;
+  transitioning.value = false;
+};
 
-const compact = injection(kCompact)
+const compact = injection(kCompact);
 const headerFontSize = computed(() => {
   if (compact.value) {
-    return '1.8rem'
+    return "1.8rem";
   }
   if (name.value && name.value.length > 30) {
-    return '2rem'
+    return "2rem";
   }
-  return '2.425rem'
-})
+  return "2.425rem";
+});
 
-const { dragover } = injection(kDropHandler)
-const { show } = useDialog(AddInstanceDialogKey)
+const { dragover } = injection(kDropHandler);
+const { show } = useDialog(AddInstanceDialogKey);
 const onDropModpack = (e: DragEvent) => {
-  e.preventDefault()
-  const file = e.dataTransfer?.files.item(0)
+  e.preventDefault();
+  const file = e.dataTransfer?.files.item(0);
   if (file) {
     show({
-      format: 'modpack',
+      format: "modpack",
       path: file.path,
-    })
+    });
   }
-}
+};
 
-const overcount = ref(0)
+const overcount = ref(0);
 </script>
 <style scoped>
-
 .header {
   padding-top: 2.5rem;
 }
@@ -151,5 +148,4 @@ const overcount = ref(0)
 .dark .compact {
   /* background: rgba(56, 56, 56, 0.4); */
 }
-
 </style>

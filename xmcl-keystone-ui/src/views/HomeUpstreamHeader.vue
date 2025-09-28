@@ -1,9 +1,7 @@
 <template>
   <v-card
-    class="flex flex-col items-center justify-center gap-4 p-4"
-    :color="cardColor"
-    :style="{ borderColor: '', 'backdrop-filter': `blur(${blurCard}px)` }"
-    outlined
+    class="flex flex-col items-center justify-center gap-4 p-6"
+    :style="{ borderColor: '', 'backdrop-filter': `blur(10px)` }"
   >
     <v-img
       v-if="!dense"
@@ -13,15 +11,12 @@
       :src="value.icon"
       class="rounded-lg"
     />
-    <a
-      class="text-2xl font-bold"
-      target="browser"
-      :href="value.url"
-    >
+    <a class="text-xl font-bold" target="browser" :href="value.url">
       {{ value.title }}
     </a>
-    <span class="text-center description">{{ value.description }}</span>
-    <span class="flex justify-center gap-2"
+    <span class="text-center description text-sm">{{ value.description }}</span>
+    <span
+      class="flex justify-center gap-2"
       :class="{
         'flex-wrap': !dense,
       }"
@@ -34,70 +29,39 @@
         outlined
       />
     </span>
-    <span class="infos grid items-center justify-center gap-3"
-      :class="{
-        dense
-      }"
-    >
-      <div
-        v-for="(info, i) of value.infos"
-        :key="info.name"
-        class="relative flex justify-center"
-      >
-        <InfoHighlight
-          :value="info"
-          :dense="dense"
-        />
-        <v-divider
-          v-if="i !== value.infos.length - 1 && (dense ? true : i % 2 === 0)"
-          class="absolute -right-1"
-          vertical
-        />
-      </div>
-    </span>
     <span>
-      <v-btn
-        text
-        color="primary"
-        @click="push(value.store)"
-      >
-        <v-icon
-          left
-          class="material-icons-outlined"
-        >
-          open_in_new
-        </v-icon>
-        {{ t('store.name') }}
+      <v-btn text color="primary" @click="push(value.store)">
+        <v-icon left class="material-icons-outlined"> open_in_new </v-icon>
+        {{ t("store.name") }}
       </v-btn>
     </span>
   </v-card>
 </template>
 <script lang="ts" setup>
-import CategoryChip, { CategoryChipProps } from '@/components/CategoryChip.vue'
-import InfoHighlight, { Highlight } from '@/components/InfoHighlight.vue'
-import { kTheme } from '@/composables/theme'
-import { injection } from '@/util/inject'
+import CategoryChip, { CategoryChipProps } from "@/components/CategoryChip.vue";
+import InfoHighlight, { Highlight } from "@/components/InfoHighlight.vue";
+import { kTheme } from "@/composables/theme";
+import { injection } from "@/util/inject";
 
 export interface UpstreamHeaderProps {
-  url: string
-  icon: string
-  title: string
-  description: string
-  infos: Highlight[]
-  categories: CategoryChipProps[]
-  type: 'curseforge' | 'modrinth' | 'ftb'
-  store: string
+  url: string;
+  icon: string;
+  title: string;
+  description: string;
+  infos: Highlight[];
+  categories: CategoryChipProps[];
+  type: "curseforge" | "modrinth" | "ftb";
+  store: string;
 }
 
-const { push } = useRouter()
-const { t } = useI18n()
+const { push } = useRouter();
+const { t } = useI18n();
 defineProps<{
-  value: UpstreamHeaderProps
-  dense?: boolean
-}>()
+  value: UpstreamHeaderProps;
+  dense?: boolean;
+}>();
 
-const { cardColor, blurCard } = injection(kTheme)
-
+const { cardColor, blurCard } = injection(kTheme);
 </script>
 <style scoped>
 .infos {
@@ -123,4 +87,8 @@ const { cardColor, blurCard } = injection(kTheme)
   overflow: hidden;
 }
 
+.v-card {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+}
 </style>

@@ -1,10 +1,13 @@
 <template>
   <div
-    class="grid xl:gap-4 gap-1 home-actions"
+    class="grid gap-1 home-actions rounded-full p-2 shadow-xl"
+    elevation="12"
     :style="{
       'grid-template-columns': `repeat(${
         instance && !instance.upstream ? 3 : 3
       }, minmax(0, 1fr))`,
+      'background-color': sideBarColor,
+      'backdrop-filter': `blur(10px)`,
     }"
   >
     <v-btn
@@ -27,10 +30,7 @@
       <v-icon> folder </v-icon>
     </v-btn>
 
-    <v-speed-dial
-      :direction="'bottom'"
-      :open-on-hover="true"
-    >
+    <v-speed-dial :direction="'bottom'" :open-on-hover="true">
       <template #activator>
         <v-btn
           v-shared-tooltip="() => t('baseSetting.title', 2)"
@@ -86,12 +86,11 @@ import {
   waitModpackFiles,
 } from "@xmcl/runtime-api";
 import { useDialog } from "../composables/dialog";
-import {
-  AppExportServerDialogKey,
-} from "../composables/instanceExport";
+import { AppExportServerDialogKey } from "../composables/instanceExport";
 
 const { path, instance } = injection(kInstance);
 const { isValidating } = injection(kInstances);
+import { kTheme } from "@/composables/theme";
 const { openDirectory } = useService(BaseServiceKey);
 const { show: showLogDialog } = useDialog("log");
 const { show: showExportServer } = useDialog(AppExportServerDialogKey);
@@ -99,13 +98,15 @@ const { show: showInstanceInstallDialog } = useDialog(InstanceInstallDialog);
 const { openModpack } = useService(ModpackServiceKey);
 const { t } = useI18n();
 
+const { sideBarColor } = injection(kTheme);
+
 function showInstanceFolder() {
   openDirectory(path.value);
 }
 
-const loading = ref(false)
+const loading = ref(false);
 function onClickInstallFromModpack() {
-  loading.value = true
+  loading.value = true;
   windowController
     .showOpenDialog({
       properties: ["openFile"],
@@ -130,8 +131,9 @@ function onClickInstallFromModpack() {
         files: files,
         id: "",
       });
-    }).finally(() => {
-      loading.value = false
+    })
+    .finally(() => {
+      loading.value = false;
     });
 }
 </script>

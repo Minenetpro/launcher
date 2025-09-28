@@ -3,7 +3,7 @@
     <v-list
       nav
       dense
-      class="ml-1 gap-1 flex flex-col flex-grow-0 justify-start overflow-auto px-2"
+      class="flex flex-col flex-grow-0 justify-start overflow-auto px-2"
     >
       <template v-if="isValidating">
         <v-skeleton-loader
@@ -26,31 +26,49 @@
           :key="i.id + index"
           :group="i"
           :color="i.color || defaultColor"
-          @arrange="move($event.targetPath, $event.toPath || i, $event.previous)"
+          @arrange="
+            move($event.targetPath, $event.toPath || i, $event.previous)
+          "
           @group="group($event, i)"
         />
       </template>
 
+      <v-divider class="my-2" />
+
       <v-list-item
         push
         class="non-moveable"
-        v-shared-tooltip.right="_ => t('instances.add')"
+        v-shared-tooltip.right="(_) => t('instances.add')"
         @click="showAddInstance()"
       >
         <v-list-item-avatar
           id="create-instance-button"
           size="48"
-          class="bg-[rgba(80,80,80,0.4)] transition-all duration-300 hover:rounded-xl hover:bg-green-500"
+          class="bg-[rgba(80,80,80,0.4)] transition-all duration-300 hover:bg-[rgba(255,255,255,0.2)]"
           large
         >
-          <v-icon class="text-3xl">
-            add
-          </v-icon>
+          <v-icon class="text-3xl"> add </v-icon>
         </v-list-item-avatar>
 
-        <v-list-item-title>{{ t('instances.add') }}</v-list-item-title>
+        <v-list-item-title>{{ t("instances.add") }}</v-list-item-title>
       </v-list-item>
-      <v-spacer />
+
+      <v-list-item
+        push
+        class="non-moveable"
+        v-shared-tooltip.right="(_) => t('store.name', 2)"
+        to="/store"
+        link
+      >
+        <v-list-item-avatar
+          size="48"
+          class="bg-[rgba(80,80,80,0.4)] transition-all duration-300 hover:bg-[rgba(255,255,255,0.2)]"
+          large
+        >
+          <v-icon class="text-3xl"> store </v-icon>
+        </v-list-item-avatar>
+        <v-list-item-title>{{ t("store.name", 2) }}</v-list-item-title>
+      </v-list-item>
     </v-list>
     <SimpleDialog
       :width="500"
@@ -67,52 +85,61 @@
   </div>
 </template>
 <script setup lang="ts">
-import SimpleDialog from '@/components/SimpleDialog.vue'
-import { useService } from '@/composables'
-import { useDialog } from '@/composables/dialog'
-import { useInstanceGroup, useInstanceGroupDefaultColor } from '@/composables/instanceGroup'
-import { AddInstanceDialogKey } from '@/composables/instanceTemplates'
-import { kInstances } from '@/composables/instances'
-import { useNotifier } from '@/composables/notifier'
-import { vSharedTooltip } from '@/directives/sharedTooltip'
-import { injection } from '@/util/inject'
-import { InstanceSavesServiceKey } from '@xmcl/runtime-api'
-import AppSideBarGroupItem from './AppSideBarGroupItem.vue'
-import AppSideBarGroupSettingDialog from './AppSideBarGroupSettingDialog.vue'
-import AppSideBarInstanceItem from './AppSideBarInstanceItem.vue'
+import SimpleDialog from "@/components/SimpleDialog.vue";
+import { useService } from "@/composables";
+import { useDialog } from "@/composables/dialog";
+import {
+  useInstanceGroup,
+  useInstanceGroupDefaultColor,
+} from "@/composables/instanceGroup";
+import { AddInstanceDialogKey } from "@/composables/instanceTemplates";
+import { kInstances } from "@/composables/instances";
+import { useNotifier } from "@/composables/notifier";
+import { vSharedTooltip } from "@/directives/sharedTooltip";
+import { injection } from "@/util/inject";
+import { InstanceSavesServiceKey } from "@xmcl/runtime-api";
+import AppSideBarGroupItem from "./AppSideBarGroupItem.vue";
+import AppSideBarGroupSettingDialog from "./AppSideBarGroupSettingDialog.vue";
+import AppSideBarInstanceItem from "./AppSideBarInstanceItem.vue";
 
-const { t } = useI18n()
+const { t } = useI18n();
 
-const { isValidating } = injection(kInstances)
+const { isValidating } = injection(kInstances);
 
-const { show: showAddInstance } = useDialog(AddInstanceDialogKey)
+const { show: showAddInstance } = useDialog(AddInstanceDialogKey);
 
-const { groups, move, group } = useInstanceGroup()
+const { groups, move, group } = useInstanceGroup();
 
-const { isShown } = useDialog('saveCopyDialog')
-const copySavePayload = ref(undefined as {
-  saveName: string
-  srcInstancePath: string
-  destInstancePath: string
-} | undefined)
-const { cloneSave } = useService(InstanceSavesServiceKey)
-const defaultColor = useInstanceGroupDefaultColor()
-const { notify } = useNotifier()
+const { isShown } = useDialog("saveCopyDialog");
+const copySavePayload = ref(
+  undefined as
+    | {
+        saveName: string;
+        srcInstancePath: string;
+        destInstancePath: string;
+      }
+    | undefined
+);
+const { cloneSave } = useService(InstanceSavesServiceKey);
+const defaultColor = useInstanceGroupDefaultColor();
+const { notify } = useNotifier();
 function doCopy() {
   if (copySavePayload.value) {
-    cloneSave({ ...copySavePayload.value }).then(() => {
-      notify({
-        level: 'success',
-        title: t('save.copy.name'),
-      })
-    }, () => {
-      notify({
-        level: 'error',
-        title: t('save.copy.name'),
-      })
-    })
+    cloneSave({ ...copySavePayload.value }).then(
+      () => {
+        notify({
+          level: "success",
+          title: t("save.copy.name"),
+        });
+      },
+      () => {
+        notify({
+          level: "error",
+          title: t("save.copy.name"),
+        });
+      }
+    );
   }
-  isShown.value = false
+  isShown.value = false;
 }
-
 </script>

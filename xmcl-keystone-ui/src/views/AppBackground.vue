@@ -1,107 +1,105 @@
 <template>
   <div class="absolute z-0 h-full w-full">
-    <Particles
-      v-if="backgroundType === BackgroundType.PARTICLE"
-      color="#dedede"
-      class="absolute z-0 h-full w-full"
-      :style="{ filter: `blur(${blur}px)` }"
-      :click-mode="particleMode"
-    />
-    <Halo
-      v-else-if="backgroundType === BackgroundType.HALO"
-      class="absolute z-0 h-full w-full"
-      :style="{ filter: `blur(${blur}px)` }"
-    />
-    <img
-      v-else-if="backgroundImage?.type === 'image' && backgroundType === BackgroundType.IMAGE"
-      :src="backgroundImage.url"
-      class="absolute z-0 h-full w-full"
-      :style="{ filter: `blur(${blur}px)`, 'object-fit': backgroundImageFit }"
-    >
     <video
-      v-else-if="backgroundImage?.type === 'video' && backgroundType === BackgroundType.VIDEO"
       ref="videoRef"
       class="absolute z-0 h-full w-full object-cover"
-      :style="{ filter: `blur(${blur}px)`, 'object-fit': backgroundImageFit }"
-      :src="backgroundImage.url"
+      :style="{ filter: `blur(2px)`, 'object-fit': 'cover' }"
       autoplay
       loop
+      muted
+      playsinline
+      preload="auto"
     />
-    <template
-      v-if="backgroundImageOverride"
-    >
-      <transition
-        name="fade-transition"
-      >
+    <template v-if="backgroundImageOverride">
+      <transition name="fade-transition">
         <img
           :key="backgroundImageOverride"
           :src="backgroundImageOverride"
           class="z-1 absolute h-full w-full"
-        >
+        />
       </transition>
       <div class="img-container" />
     </template>
 
-    <transition
-      name="fade-transition"
-    >
+    <transition name="fade-transition">
       <div
-        v-if="(backgroundColorOverlay && !isHome) || backgroundType === BackgroundType.NONE"
+        v-if="backgroundColorOverlay && !isHome"
         class="z-3 absolute h-full w-full"
-        :style="{ 'background': backgroundColor }"
+        :style="{ background: backgroundColor }"
       />
     </transition>
   </div>
 </template>
 <script lang="ts" setup>
-import Halo from '@/components/Halo.vue'
-import Particles from '@/components/Particles.vue'
-import { injection } from '@/util/inject'
-import { kTheme, BackgroundType } from '@/composables/theme'
-import { kInstanceLaunch } from '@/composables/instanceLaunch'
+import Hls from "hls.js";
+import { injection } from "@/util/inject";
+import { kTheme } from "@/composables/theme";
+import { kInstanceLaunch } from "@/composables/instanceLaunch";
 
-const { sideBarColor, backgroundColorOverlay, backgroundColor, blur, backgroundImage, backgroundType, particleMode, backgroundImageFit, volume, backgroundImageOverride } = injection(kTheme)
-const videoRef = ref(null as null | HTMLVideoElement)
+/* const HLS_URL =
+  "https://stream.mux.com/N2Lcv1sByrqy8yJcU00ngo02vbRCa5PxtHM5jh9ofTt6w.m3u8"; */
 
-const route = useRoute()
-const isHome = computed(() => route.path === '/')
+const HLS_URL =
+  "https://stream.mux.com/iFU5SIzlbKW01vtXLkJljRRek7yKj34g00NtLbaCXLZQ8.m3u8";
 
-watch(volume, (newVolume) => {
-  if (videoRef.value) {
-    videoRef.value.volume = newVolume
+const {
+  sideBarColor,
+  backgroundColorOverlay,
+  backgroundColor,
+  blur,
+  backgroundImageOverride,
+} = injection(kTheme);
+const videoRef = ref(null as null | HTMLVideoElement);
+
+const route = useRoute();
+const isHome = computed(() => route.path === "/");
+
+let hls: Hls | undefined;
+
+const { gameProcesses } = injection(kInstanceLaunch);
+
+watch(
+  computed(() => gameProcesses.value.length),
+  (cur, last) => {
+    if (cur > 0 && last === 0) {
+      videoRef.value?.pause();
+    } else if (cur === 0 && last > 0) {
+      videoRef.value?.play();
+    }
   }
-})
-
-const { gameProcesses } = injection(kInstanceLaunch)
-
-watch(computed(() => gameProcesses.value.length), (cur, last) => {
-  if (cur > 0 && last === 0) {
-    videoRef.value?.pause()
-  } else if (cur === 0 && last > 0) {
-    videoRef.value?.play()
-  }
-})
-
-watch(videoRef, (v) => {
-  if (v) {
-    v.volume = volume.value
-  }
-})
+);
 
 onMounted(() => {
-  if (videoRef.value) {
-    videoRef.value.volume = volume.value
+  const video = videoRef.value;
+  if (!video) return;
+
+  if (Hls.isSupported()) {
+    hls = new Hls({ enableWorker: true });
+    hls.loadSource(HLS_URL);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+      video.play().catch(() => {});
+    });
+  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    video.src = HLS_URL;
+    video.play().catch(() => {});
   }
-})
+});
 
-watch(backgroundType, (t) => {
-  console.log(t)
-})
-
+onBeforeUnmount(() => {
+  if (hls) {
+    hls.destroy();
+    hls = undefined;
+  }
+});
 </script>
 <style scoped>
 .img-container {
-  background: radial-gradient(ellipse at top right, transparent, v-bind(sideBarColor) 72%);
+  background: radial-gradient(
+    ellipse at top right,
+    transparent,
+    v-bind(sideBarColor) 72%
+  );
   position: absolute;
   min-width: 100%;
   min-height: 100%;
