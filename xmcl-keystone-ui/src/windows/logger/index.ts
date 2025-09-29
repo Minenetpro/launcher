@@ -38,7 +38,7 @@ const app = new Vue(defineComponent({
       } else if (theme === 'dark') {
         vuetify.framework.theme.dark = true
       } else if (theme === 'light') {
-        vuetify.framework.theme.dark = false
+        vuetify.framework.theme.dark = true // always use dark theme
       }
     }
     updateTheme(theme)

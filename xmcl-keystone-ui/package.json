@@ -2,17 +2,17 @@
     "name": "@xmcl/keystone-ui",
     "private": true,
     "type": "module",
-    "productName": "xmcl",
-    "version": "0.50.1",
-    "author": "ci010 <cijhn@hotmail.com>",
-    "description": "X Minecraft Launcher - A modern Minecraft launcher",
-    "license": "MIT",
+    "productName": "minenetpro",
+    "version": "0.1.0",
+    "author": "minenetpro",
+    "description": "Minenet.pro desktop",
+    "license": "AGPL-3.0",
     "engines": {
         "node": ">=20"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/voxelum/x-minecraft-launcher"
+        "url": "https://github.com/minenetpro/launcher"
     },
     "scripts": {
         "build": "vite build --emptyOutDir",
