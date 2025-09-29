@@ -1,7 +1,7 @@
 {
     "version": "0.52.3",
     "private": true,
-    "license": "MIT",
+    "license": "AGPL-3.0",
     "packageManager": "pnpm@9.3.0",
     "engines": {
         "node": ">=20"

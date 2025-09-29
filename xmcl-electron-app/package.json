@@ -1,17 +1,17 @@
 {
-    "name": "xmcl",
+    "name": "minenetpro",
     "private": true,
     "main": "./index.js",
     "version": "0.52.3",
-    "author": "ci010 <cijhn@hotmail.com>",
-    "description": "X Minecraft Launcher - A modern Minecraft launcher",
+    "author": "minenetpro",
+    "description": "Minenet.pro desktop",
     "license": "MIT",
     "engines": {
         "node": ">=20"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/voxelum/x-minecraft-launcher"
+        "url": "https://github.com/minenetpro/launcher"
     },
     "msstoreCliAppId": "9MXJWHXTP4B9",
     "scripts": {

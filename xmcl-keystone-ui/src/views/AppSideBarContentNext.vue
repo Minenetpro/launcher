@@ -65,7 +65,7 @@
           class="bg-[rgba(80,80,80,0.4)] transition-all duration-300 hover:bg-[rgba(255,255,255,0.2)]"
           large
         >
-          <v-icon class="text-3xl"> store </v-icon>
+          <v-icon class="text-3xl"> widgets </v-icon>
         </v-list-item-avatar>
         <v-list-item-title>{{ t("store.name", 2) }}</v-list-item-title>
       </v-list-item>
