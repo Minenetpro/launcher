@@ -5,7 +5,7 @@ import type { Configuration } from 'electron-builder'
 dotenv()
 
 export const config = {
-  productName: 'X Minecraft Launcher',
+  productName: 'Minenet.pro',
   appId: 'xmcl',
   directories: {
     output: 'build/output',
@@ -20,8 +20,8 @@ export const config = {
   // set this to your own repo!
   publish: [{
     provider: 'github',
-    owner: 'voxelum',
-    repo: 'x-minecraft-launcher',
+    owner: 'minenetpro',
+    repo: 'launcher',
   }],
   files: [{
     from: 'dist',
@@ -32,18 +32,18 @@ export const config = {
     to: '.',
     filter: 'package.json',
   }],
-  artifactName: 'xmcl-${version}-${platform}-${arch}.${ext}',
+  artifactName: 'minenetpro-${version}-${platform}-${arch}.${ext}',
   appx: {
-    displayName: 'X Minecraft Launcher',
+    displayName: 'Minenet.pro',
     applicationId: 'xmcl',
     identityName: 'xmcl',
     backgroundColor: 'transparent',
     publisher: process.env.PUBLISHER,
-    publisherDisplayName: 'CI010',
+    publisherDisplayName: 'minenetpro',
     setBuildNumber: true,
   },
   dmg: {
-    artifactName: 'xmcl-${version}-${arch}.${ext}',
+    artifactName: 'minenetpro-${version}-${arch}.${ext}',
     contents: [
       {
         x: 410,
@@ -89,14 +89,14 @@ export const config = {
     ],
   },
   linux: {
-    executableName: 'xmcl',
+    executableName: 'minenetpro',
     desktop: {
       MimeType: 'x-scheme-handler/xmcl',
       StartupWMClass: 'xmcl',
     },
     category: 'Game',
     icon: 'icons/dark.icns',
-    artifactName: 'xmcl-${version}-${arch}.${ext}',
+    artifactName: 'minenetpro-${version}-${arch}.${ext}',
     target: [
       { target: 'deb', arch: ['x64', 'arm64'] },
       { target: 'rpm', arch: ['x64', 'arm64'] },
