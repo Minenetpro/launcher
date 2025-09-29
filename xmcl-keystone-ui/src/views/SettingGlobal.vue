@@ -2,10 +2,10 @@
   <div>
     <SettingHeader>
       <div class="flex flex-col">
-        🌍 {{ t('setting.globalSetting') }}
+        Global game settings
 
         <v-subheader class="my-0 h-[unset] px-0">
-          {{ t('setting.globalSettingHint') }}
+          Games will use these settings by default.
         </v-subheader>
       </div>
     </SettingHeader>

@@ -7,7 +7,7 @@
   >
     <div class="px-4">
       <SettingGeneral />
-      <SettingAppearance />
+      <!-- <SettingAppearance /> -->
     </div>
     <div class="px-4">
       <SettingGlobal />

@@ -1,7 +1,7 @@
 <template>
   <div class="flex max-w-full flex-row gap-4">
     <v-card
-      class="flex grow flex-col overflow-x-hidden p-2 "
+      class="flex grow flex-col overflow-x-hidden p-2"
       flat
       color="transparent"
     >
@@ -13,41 +13,32 @@
           :profile="gameProfile"
         />
         <div>
-          <v-list-item>
+          <!-- <v-list-item>
             <v-list-item-avatar class="md:hidden lg:block">
-              <v-icon>
-                badge
-              </v-icon>
+              <v-icon> badge </v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
-                {{ t('user.name') }}
+                {{ t("user.name") }}
               </v-list-item-title>
               <v-list-item-subtitle>
-                {{ t('user.nameHint') }}
+                {{ t("user.nameHint") }}
               </v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action class="flex grow-0 flex-row">
-              <v-text-field
-                v-model="name"
-                dense
-                outlined
-                hide-details
-              />
+              <v-text-field v-model="name" dense outlined hide-details />
             </v-list-item-action>
-          </v-list-item>
+          </v-list-item> -->
           <v-list-item>
             <v-list-item-avatar class="md:hidden lg:block">
-              <v-icon>
-                accessibility_new
-              </v-icon>
+              <v-icon> accessibility_new </v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
-                {{ t('userSkin.useSlim') }}
+                {{ t("userSkin.useSlim") }}
               </v-list-item-title>
               <v-list-item-subtitle>
-                {{ t('userSkin.skinType') }}
+                {{ t("userSkin.skinType") }}
               </v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
@@ -58,10 +49,12 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title>
-                {{ t('userCape.changeTitle') }}
+                {{ t("userCape.changeTitle") }}
               </v-list-item-title>
-              <v-list-item-subtitle class="max-w-100 overflow-hidden whitespace-pre-wrap">
-                {{ t('userCape.description') }}
+              <v-list-item-subtitle
+                class="max-w-100 overflow-hidden whitespace-pre-wrap"
+              >
+                {{ t("userCape.description") }}
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -72,9 +65,7 @@
             show-arrows
             class="max-w-[400px] overflow-x-auto"
           >
-            <v-slide-item
-              v-slot="{ active, toggle }"
-            >
+            <v-slide-item v-slot="{ active, toggle }">
               <v-card
                 :color="active ? 'primary' : 'grey lighten-1'"
                 class="ma-4 py-2"
@@ -85,9 +76,11 @@
                 <div
                   class="flex flex-col justify-around items-center fill-height"
                 >
-                  <div class="mt-4 min-h-[120px] min-w-[80px] border-2 border-dashed" />
+                  <div
+                    class="mt-4 min-h-[120px] min-w-[80px] border-2 border-dashed"
+                  />
                   <div class="text-sm font-bold text-white">
-                    {{ t('userCape.noCape') }}
+                    {{ t("userCape.noCape") }}
                   </div>
                 </div>
               </v-card>
@@ -107,10 +100,7 @@
                 <div
                   class="flex flex-col justify-around items-center fill-height"
                 >
-                  <PlayerCape
-                    class="mt-4"
-                    :src="c.url"
-                  />
+                  <PlayerCape class="mt-4" :src="c.url" />
                   <div class="text-sm font-bold text-white">
                     {{ c.alias }}
                   </div>
@@ -123,103 +113,112 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          :disabled="!changed"
-          :loading="saving"
-          text
-          @click="save"
-        >
-          {{ t('userSkin.save') }}
-          <v-icon right>
-            save
-          </v-icon>
+        <v-btn :disabled="!changed" :loading="saving" text @click="save">
+          {{ t("userSkin.save") }}
+          <v-icon right> save </v-icon>
         </v-btn>
       </v-card-actions>
     </v-card>
   </div>
 </template>
 <script lang="ts" setup>
-import { NameAvailability, OfficialUserServiceKey, UserProfile } from '@xmcl/runtime-api'
-import PlayerCape from '../components/PlayerCape.vue'
-import { PlayerNameModel, usePlayerName, UserSkinModel, useUserSkin } from '../composables/userSkin'
-import UserSkin from './UserSkin.vue'
-import { useRefreshable, useService } from '@/composables'
+import {
+  NameAvailability,
+  OfficialUserServiceKey,
+  UserProfile,
+} from "@xmcl/runtime-api";
+import PlayerCape from "../components/PlayerCape.vue";
+import {
+  PlayerNameModel,
+  usePlayerName,
+  UserSkinModel,
+  useUserSkin,
+} from "../composables/userSkin";
+import UserSkin from "./UserSkin.vue";
+import { useRefreshable, useService } from "@/composables";
 
 const props = defineProps<{
-  user: UserProfile
-}>()
+  user: UserProfile;
+}>();
 
-const { t } = useI18n()
+const { t } = useI18n();
 
-const gameProfile = computed(() => props.user.profiles[props.user.selectedProfile])
+const gameProfile = computed(
+  () => props.user.profiles[props.user.selectedProfile]
+);
 
-const name = usePlayerName(gameProfile)
-provide(PlayerNameModel, name)
+const name = usePlayerName(gameProfile);
+provide(PlayerNameModel, name);
 
-const userSkinModel = useUserSkin(computed(() => props.user.id), gameProfile)
-provide(UserSkinModel, userSkinModel)
+const userSkinModel = useUserSkin(
+  computed(() => props.user.id),
+  gameProfile
+);
+provide(UserSkinModel, userSkinModel);
 
-const { slim, modified, save: saveSkin, cape } = userSkinModel
+const { slim, modified, save: saveSkin, cape } = userSkinModel;
 
-const capes = computed(() => gameProfile.value.capes ?? [])
+const capes = computed(() => gameProfile.value.capes ?? []);
 const capeModel = computed({
   get() {
     if (cape.value) {
-      const index = capes.value.findIndex(v => v.url === cape.value)
-      if (index === -1) return 0
-      return index + 1
+      const index = capes.value.findIndex((v) => v.url === cape.value);
+      if (index === -1) return 0;
+      return index + 1;
     } else {
-      return 0
+      return 0;
     }
   },
   set(v) {
     if (v === 0) {
-      cape.value = undefined
+      cape.value = undefined;
     } else {
-      cape.value = capes.value[v - 1]?.url
+      cape.value = capes.value[v - 1]?.url;
     }
   },
-})
+});
 
-const currentCape = computed(() => capes.value.find(v => v.state === 'ACTIVE'))
-const { checkNameAvailability, setName } = useService(OfficialUserServiceKey)
-const nameError = ref('')
+const currentCape = computed(() =>
+  capes.value.find((v) => v.state === "ACTIVE")
+);
+const { checkNameAvailability, setName } = useService(OfficialUserServiceKey);
+const nameError = ref("");
 
 const changed = computed(() => {
   if (cape.value !== currentCape.value?.url) {
-    return true
+    return true;
   }
   if (name.value !== gameProfile.value.name) {
-    return true
+    return true;
   }
   if (modified.value) {
-    return true
+    return true;
   }
-  return false
-})
+  return false;
+});
 
 const { refresh: save, refreshing: saving } = useRefreshable(
   async function save() {
     if (name.value !== gameProfile.value.name) {
-      const result = await checkNameAvailability(props.user, name.value)
+      const result = await checkNameAvailability(props.user, name.value);
       if (result === NameAvailability.AVAILABLE) {
-        await setName(props.user, name.value)
+        await setName(props.user, name.value);
       } else if (result === NameAvailability.DUPLICATE) {
-        nameError.value = t('nameError.duplicate')
+        nameError.value = t("nameError.duplicate");
       } else if (result === NameAvailability.NOT_ALLOWED) {
-        nameError.value = t('nameError.notAllowed')
+        nameError.value = t("nameError.notAllowed");
       }
     }
 
     if (modified.value) {
-      await saveSkin()
+      await saveSkin();
     }
-  },
-)
+  }
+);
 
 watch(gameProfile, (p) => {
-  name.value = p.name
-})
+  name.value = p.name;
+});
 </script>
 <style scoped>
 .cape {

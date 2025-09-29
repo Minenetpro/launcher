@@ -1,9 +1,9 @@
 <template>
   <div>
     <SettingHeader>
-      🌐 {{ t('setting.network') }}
+      {{ t('setting.network') }}
     </SettingHeader>
-    <SettingItemSelect
+    <!-- <SettingItemSelect
       :select.sync="apiSetsPreference"
       :title="''"
       :description="t('setting.useBmclAPIDescription')"
@@ -21,7 +21,7 @@
           </v-icon>
         </a>
       </template>
-    </SettingItemSelect>
+    </SettingItemSelect> -->
     <v-list-item>
       <v-list-item-action class="self-center">
         <v-checkbox v-model="httpProxyEnabled" />

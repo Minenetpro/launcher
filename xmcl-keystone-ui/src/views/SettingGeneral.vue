@@ -1,20 +1,21 @@
 <template>
   <div>
     <SettingHeader>
-      ⚙️ {{ t("setting.general") }}
+      Settings
+      <v-subheader class="my-0 h-[unset] px-0">
+        Minenet.pro desktop app. Proudly powered by<a href="https://github.com/Voxelum/x-minecraft-launcher" target="_blank" class="ml-1">XMCL</a>.
+      </v-subheader>
     </SettingHeader>
-    <SettingItemSelect
+    <!-- <SettingItemSelect
       :select.sync="selectedLocale"
       :title="t('setting.language')"
       :description="t('setting.languageDescription')"
       :items="locales"
-    />
+    /> -->
     <v-list-item>
       <v-list-item-content>
         <v-list-item-title :color="errorText ? 'red' : ''">
-          {{
-            t("setting.location")
-          }}
+         Storage Location
         </v-list-item-title>
         <v-list-item-subtitle class="text-red!" v-if="errorText">{{ errorText }}</v-list-item-subtitle>
         <v-list-item-subtitle v-else>{{ root }}</v-list-item-subtitle>
@@ -57,11 +58,11 @@
         </v-btn>
       </v-list-item-action>
     </v-list-item>
-    <SettingItemCheckbox
+    <!-- <SettingItemCheckbox
       v-model="disableTelemetry"
       :title="t('setting.disableTelemetry')"
       :description="t('setting.disableTelemetryDescription')"
-    />
+    /> -->
     <SettingItemCheckbox
       v-if="env?.os === 'linux' || env?.os === 'windows'"
       v-model="enableDedicatedGPUOptimization"

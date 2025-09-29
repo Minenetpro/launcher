@@ -1,7 +1,7 @@
 <template>
   <div>
     <SettingHeader v-if="!disableUpdate">
-      🚀 {{ t("setting.update") }}
+      {{ t("setting.update") }}
     </SettingHeader>
     <v-list-item v-if="!disableUpdate">
       <v-list-item-action class="self-center">

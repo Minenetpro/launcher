@@ -31,16 +31,19 @@
   </v-menu>
 </template>
 <script lang="ts" setup>
-import PlayerAvatar from '@/components/PlayerAvatar.vue'
-import { kUserContext } from '@/composables/user'
-import UserCard from '@/components/UserCard.vue'
-import { UserSkinRenderPaused } from '@/composables/userSkin'
-import { injection } from '@/util/inject'
+import PlayerAvatar from "@/components/PlayerAvatar.vue";
+import { kUserContext } from "@/composables/user";
+import UserCard from "@/components/UserCard.vue";
+import { UserSkinRenderPaused } from "@/composables/userSkin";
+import { injection } from "@/util/inject";
 
-const isShown = ref(false)
-const { gameProfile: selectedUserGameProfile } = injection(kUserContext)
+const isShown = ref(false);
+const { gameProfile: selectedUserGameProfile } = injection(kUserContext);
 
-provide(UserSkinRenderPaused, computed(() => !isShown.value))
+provide(
+  UserSkinRenderPaused,
+  computed(() => !isShown.value)
+);
 </script>
 <style scoped>
 .user-menu {
