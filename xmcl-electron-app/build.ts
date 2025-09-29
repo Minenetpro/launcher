@@ -120,11 +120,24 @@ async function start() {
 
       const dest = `build/output/app-${version}-${platformName}.asar`
       const gzipDest = dest + '.gz'
+      // Try common locations for app.asar across platforms
       let src = join(context.appOutDir, 'resources/app.asar')
       if (!existsSync(src)) {
-        src = join(context.appOutDir, 'X Minecraft Launcher.app/Contents/Resources/app.asar')
-      } else if (!existsSync(src)) {
-        console.log(`  ${chalk.yellow('•')} fallback to ${chalk.yellow('Resources/app.asar')} for ${chalk.yellow('resources/app.asar')} not found`)
+        // macOS: locate the actual .app bundle dynamically
+        try {
+          const entries = await readdir(context.appOutDir)
+          const appBundle = entries.find((e) => e.endsWith('.app'))
+          if (appBundle) {
+            const candidate = join(context.appOutDir, appBundle, 'Contents/Resources/app.asar')
+            if (existsSync(candidate)) {
+              src = candidate
+            }
+          }
+        } catch {}
+      }
+      if (!existsSync(src)) {
+        console.log(`  ${chalk.yellow('•')} skip preparing asar: ${chalk.yellow('app.asar')} not found in ${chalk.yellow(context.appOutDir)}`)
+        return
       }
       await copyFile(src, dest)
       await writeHash('sha256', dest)
