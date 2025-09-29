@@ -345,10 +345,8 @@ export function useTheme(
     },
   });
   const sideBarColor = computed({
-    get: () =>
-      isDark.value
-        ? currentTheme.value.colors.darkSideBarColor
-        : currentTheme.value.colors.lightSideBarColor ?? "",
+    // enforce theme
+    get: () =>  "#FFFFFF1C",
     set: (v: string) => {
       if (isDark.value) {
         currentTheme.value.colors.darkSideBarColor = v;

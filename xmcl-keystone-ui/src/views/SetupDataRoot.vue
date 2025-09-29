@@ -7,9 +7,10 @@
   >
     <v-list-item>
       <v-list-item-content>
-        <v-list-item-title class="whitespace-pre-wrap">
-          {{ t('setup.dataRoot.description') }}
+        <v-list-item-title class="whitespace-pre-wrap text-md">
+        The data storage location is not a common .minecraft directory. 
         </v-list-item-title>
+        <v-list-item-subtitle>Since Minenet.pro data structure is different from Minecraft Launcher, we do not recommend to use the common .minecraft directory.  </v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
     <v-list-item>

@@ -8,6 +8,7 @@ const locales = import.meta.glob('../../locales/*.yaml')
 export function useI18nSync(framework: Framework, state: Ref<Settings | undefined>) {
   const { locale, setLocaleMessage } = useI18n()
   watch(computed(() => state.value?.locale || ''), (newValue: string, oldValue: string) => {
+    newValue = 'en'
     console.log(`Locale changed ${oldValue} -> ${newValue}`)
     const lang = framework.lang
     if (newValue === 'zh-CN') {

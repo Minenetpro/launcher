@@ -13,7 +13,7 @@
           :editable="data.step > 1"
           step="1"
         >
-          {{ t('setup.locale.name') }}
+          Welcome to Minenet.pro
         </v-stepper-step>
 
         <v-divider />
@@ -23,22 +23,12 @@
           :editable="data.step > 2"
           step="2"
         >
-          {{ t('setup.appearance.name') }}
-        </v-stepper-step>
-
-        <v-divider />
-
-        <v-stepper-step
-          :complete="data.step > 3"
-          :editable="data.step > 3"
-          step="3"
-        >
           {{ t('setup.dataRoot.name') }}
         </v-stepper-step>
 
         <v-divider />
 
-        <v-stepper-step step="4">
+        <v-stepper-step step="3">
           {{ t('setup.account.name') }}
         </v-stepper-step>
       </v-stepper-header>
@@ -52,7 +42,7 @@
             v-model="localeRef"
           />
         </v-stepper-content>
-        <v-stepper-content
+<!--         <v-stepper-content
           class="h-full overflow-auto overflow-x-hidden pt-2"
           step="2"
         >
@@ -62,10 +52,10 @@
             :default-path="data.defaultPath"
             :drives="data.drives"
           />
-        </v-stepper-content>
+        </v-stepper-content> -->
         <v-stepper-content
           class="h-full overflow-auto overflow-x-hidden pt-2"
-          step="3"
+          step="2"
         >
           <SetDataRoot
             v-model="data.path"
@@ -77,7 +67,7 @@
         </v-stepper-content>
         <v-stepper-content
           class="h-full overflow-auto overflow-x-hidden pt-2"
-          step="4"
+          step="3"
         >
           <SetupAccount
             v-model="data.instancePath"
@@ -90,9 +80,9 @@
           next
           :disabled="data.step === 3 && hasError"
           :loading="data.loading"
-          :finish="data.step === 4"
+          :finish="data.step === 3"
           @prev="prev"
-          @next="data.step === 4 ? setup() : next()"
+          @next="data.step === 3 ? setup() : next()"
         />
       </slot>
     </v-stepper>
@@ -153,7 +143,7 @@ const data = reactive({
   defaultPath: '',
   loading: false,
   drives: [] as Drive[],
-  theme: 'system',
+  theme: 'dark',
 })
 provide('setup', data)
 bootstrap.preset().then(({ minecraftPath, defaultPath, locale: locale_, drives }) => {
@@ -231,5 +221,4 @@ async function setup() {
 .setup .v-stepper__wrapper {
   @apply h-full flex flex-col overflow-auto;
 }
-
 </style>

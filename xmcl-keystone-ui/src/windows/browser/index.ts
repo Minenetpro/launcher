@@ -12,13 +12,7 @@ const app = new Vue({
   vuetify,
   i18n,
   setup() {
-    const baseServiceChannel = serviceChannels.open(BaseServiceKey)
-    baseServiceChannel.call('getSettings').then(state => state).then(state => {
-      i18n.locale = state.locale
-      state.subscribe('localeSet', (locale) => {
-        i18n.locale = locale
-      })
-    })
+    i18n.locale = 'en'
     return () => h(BrowseVue)
   },
 })
