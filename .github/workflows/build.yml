@@ -1,5 +1,15 @@
 name: Build
 
+permissions:
+  actions: read
+  attestations: read
+  checks: read
+  contents: read
+  deployments: read
+  issues: read
+  packages: read
+  pull-requests: write
+
 on:
   push:
     branches:
