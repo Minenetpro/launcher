@@ -64,7 +64,7 @@ export class BaseService extends AbstractService implements IBaseService {
   async makeDesktopShortcut() {
     const desktopDir = this.app.host.getPath('desktop')
     if (process.platform === 'win32') {
-      const shortcutPath = join(desktopDir, 'Minenetpro.lnk')\
+      const shortcutPath = join(desktopDir, 'Minenetpro.lnk')
       return this.app.shell.createShortcut(shortcutPath, {
         target: this.app.host.getPath('exe'),
         args: process.execArgv.join(' '),
