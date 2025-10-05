@@ -5,6 +5,63 @@
     class="invisible-scroll user-menu"
     :style="{ backdropFilter: 'blur(10px)' }"
   >
+    <v-list dense class="mb-2">
+      <v-list-item>
+        <v-list-item-avatar>
+          <img src="/assets/logo.webp" alt="Minenet.pro">
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title>
+            <div class="text-lg font-normal">
+              Minenet.pro Account
+            </div>
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            <span v-if="minenet.loading">Checking…</span>
+            <span v-else-if="minenet.authenticated">
+              Connected. Expires: {{ minenet.expISO || 'unknown' }}
+            </span>
+            <span v-else>
+              Not connected.
+            </span>
+          </v-list-item-subtitle>
+          <div class="flex items-center gap-3 mt-3">
+            <v-btn
+              small
+              color="white"
+              class="rounded-full"
+              outlined
+              @click="onOpenMinenetToken"
+              :disabled="minenet.loading || minenet.authenticated"
+            >
+              Login
+            </v-btn>
+            <v-btn
+              small
+              icon
+              color="white"
+              class="rounded-full"
+              :disabled="minenet.loading"
+              @click="onReloadMinenet"
+            >
+              <v-icon size="24"> refresh </v-icon>
+            </v-btn>
+
+            <v-btn
+              small
+              icon
+              color="red"
+              class="rounded-full"
+              :disabled="minenet.loading || !minenet.authenticated"
+              @click="onClearMinenet"
+            >
+              <v-icon size="24"> exit_to_app </v-icon>
+            </v-btn>
+          </div>
+        </v-list-item-content>
+
+      </v-list-item>
+    </v-list>
     <transition name="fade-transition" mode="out-in">
       <template v-if="!login">
         <div :key="0">
@@ -170,6 +227,41 @@ const usersToSwitch = computed(() =>
     selected.value ? v.id !== selected.value.id : true
   )
 );
+
+// Minenet Auth (Clerk JWT) status
+const minenet = reactive({ authenticated: false as boolean, expISO: '' as string | undefined, loading: true as boolean })
+async function refreshMinenet() {
+  try {
+    minenet.loading = true
+    const resp = await fetch('http://launcher/minenet/status')
+    if (resp.ok) {
+      const data = await resp.json()
+      minenet.authenticated = !!data.authenticated
+      minenet.expISO = data.expISO
+    } else {
+      minenet.authenticated = false
+      minenet.expISO = undefined
+    }
+  } catch {
+    minenet.authenticated = false
+    minenet.expISO = undefined
+  } finally {
+    minenet.loading = false
+  }
+}
+async function onLogoutMinenet() {
+  try {
+    await fetch('http://launcher/minenet/logout')
+  } finally {
+    await refreshMinenet()
+  }
+}
+const onClearMinenet = onLogoutMinenet
+function onReloadMinenet() { return refreshMinenet() }
+function onOpenMinenetToken() { window.open('http://minenet.pro/api/token', 'browser') }
+onMounted(() => {
+  refreshMinenet()
+})
 </script>
 
 <style scoped>

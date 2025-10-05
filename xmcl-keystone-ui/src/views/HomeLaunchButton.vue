@@ -10,7 +10,7 @@
         :color="sideBarColor"
         :x-large="!compact"
         :large="compact"
-        class="px-12 text-lg transition-all rounded-full"
+        class="px-12 text-lg transition-all rounded-full btn-left"
         @click="loading ? undefined : onClick()"
         @mouseenter="emit('mouseenter')"
         @mouseleave="emit('mouseleave')"
@@ -32,6 +32,26 @@
         />
       </v-btn>
     </v-badge>
+     <v-menu
+      v-model="isShown"
+      offset-y
+      left
+      :top="isFocus"
+      transition="scroll-y-transition"
+    >
+      <template #activator="{ on }">
+        <v-btn
+        :disabled="isValidating"
+          v-on="on"
+          class="rounded-full expand-button btn-right"
+          icon
+          x-large
+        >
+          <v-icon size="25" rotate="180"> arrow_drop_down </v-icon>
+        </v-btn>
+      </template>
+      <HomeLaunchButtonMenuList />
+    </v-menu>
   </div>
 </template>
 <script lang="ts" setup>
