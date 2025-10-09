@@ -5,7 +5,7 @@
     class="invisible-scroll user-menu"
     :style="{ backdropFilter: 'blur(10px)' }"
   >
-    <v-list dense class="mb-2">
+    <!-- <v-list dense class="mb-2">
       <v-list-item>
         <v-list-item-avatar>
           <img src="/assets/logo.webp" alt="Minenet.pro">
@@ -61,7 +61,7 @@
         </v-list-item-content>
 
       </v-list-item>
-    </v-list>
+    </v-list> -->
     <transition name="fade-transition" mode="out-in">
       <template v-if="!login">
         <div :key="0">

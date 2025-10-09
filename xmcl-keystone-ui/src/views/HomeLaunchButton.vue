@@ -10,7 +10,7 @@
         :color="sideBarColor"
         :x-large="!compact"
         :large="compact"
-        class="px-12 text-lg transition-all rounded-full btn-left"
+        class="px-12 text-lg transition-all rounded-full"
         @click="loading ? undefined : onClick()"
         @mouseenter="emit('mouseenter')"
         @mouseleave="emit('mouseleave')"
@@ -32,7 +32,7 @@
         />
       </v-btn>
     </v-badge>
-     <v-menu
+     <!-- <v-menu
       v-model="isShown"
       offset-y
       left
@@ -51,7 +51,7 @@
         </v-btn>
       </template>
       <HomeLaunchButtonMenuList />
-    </v-menu>
+    </v-menu> -->
   </div>
 </template>
 <script lang="ts" setup>
