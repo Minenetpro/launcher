@@ -159,7 +159,7 @@ export class ElectronUpdater implements LauncherAppUpdater {
         }],
         newUpdate: !isSameVersion(this.app.version, latestVersion),
         operation: this.app.platform.os === 'windows' 
-          ? ElectronUpdateOperation.Manual 
+          ? ElectronUpdateOperation.AutoUpdater 
           : ElectronUpdateOperation.Manual,
       }
 
