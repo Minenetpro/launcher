@@ -26,7 +26,7 @@ jobs:
       uses: benc-uk/workflow-dispatch@v1
       with:
         workflow: Deploy
-        token: ${{ secrets.PAT_GITHUB_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
         ref: 'master'
         repo: 'voxelum/xmcl-page'
     - name: Create release version file
@@ -112,7 +112,7 @@ jobs:
     - name: Create Release Note PR
       uses: peter-evans/create-pull-request@v3
       with:
-        token: ${{ secrets.PAT_GITHUB_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
         path: homebrew-xmcl
         commit-message: "Bump xmcl to ${{ github.event.release.tag_name }}"
         title: Bump xmcl to ${{ github.event.release.tag_name }}
@@ -151,7 +151,7 @@ jobs:
           iwr https://aka.ms/wingetcreate/latest -OutFile wingetcreate.exe
           .\wingetcreate.exe update CI010.XMinecraftLauncher -u $Env:URL -v $Env:VERSION -t $Env:TOKEN --submit
         env:
-          TOKEN: ${{ secrets.PAT_GITHUB_TOKEN }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
           URL: ${{ format('https://xmcl-core-api.azurewebsites.net/api/appx?version={0}', steps.version.outputs.result) }}
 
   # publish-msstore:
