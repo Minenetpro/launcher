@@ -344,9 +344,9 @@ jobs:
           stage: "release"
       - name: Create Tag
         run: |
-          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/voxelum/x-minecraft-launcher.git"
-          git config user.name ci010
-          git config user.email cijhn@hotmail.com
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/Minenetpro/launcher.git"
+          git config user.name wynn-dev
+          git config user.email wynn@wynn.website
           git tag -f ${{ steps.prepare_release.outputs.tag }}
           git push origin tag ${{ steps.prepare_release.outputs.tag }} -f
       - name: Emit Version File
@@ -374,7 +374,7 @@ jobs:
       - name: Create Release Note PR
         uses: peter-evans/create-pull-request@v3
         with:
-          token: ${{ secrets.PAT_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           path: xmcl-page
           commit-message: "docs: Update ${{ steps.prepare_release.outputs.version }} release note"
           title: Update ${{ steps.prepare_release.outputs.version }} release note
