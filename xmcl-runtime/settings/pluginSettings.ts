@@ -14,9 +14,6 @@ export const pluginSettings: LauncherAppPlugin = async (app) => {
   const saver = new AggregateExecutor<void, void>(() => { }, () =>
     settingFile.write({
       locale: state.locale,
-      autoInstallOnAppQuit: state.autoInstallOnAppQuit,
-      autoDownload: state.autoDownload,
-      allowPrerelease: state.allowPrerelease,
       apiSets: state.apiSets,
       apiSetsPreference: state.apiSetsPreference,
       allowTurn: state.allowTurn,

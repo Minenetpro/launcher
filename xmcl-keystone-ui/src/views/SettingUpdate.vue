@@ -45,36 +45,6 @@
         </v-btn>
       </v-list-item-action>
     </v-list-item>
-    <!-- <v-list-item avatar>
-            <v-list-item-action>
-              <v-checkbox v-model="autoInstallOnAppQuit" />
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>{{ t('setting.autoInstallOnAppQuit') }}</v-list-item-title>
-              <v-list-item-subtitle>{{ t('setting.autoInstallOnAppQuitDescription') }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item avatar>
-            <v-list-item-action>
-              <v-checkbox
-                v-model="autoDownload"
-
-              />
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>{{ t('setting.autoDownload') }}</v-list-item-title>
-              <v-list-item-subtitle>{{ t('setting.autoDownloadDescription') }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item avatar>
-            <v-list-item-action>
-              <v-checkbox v-model="allowPrerelease" />
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>{{ t('setting.allowPrerelease') }}</v-list-item-title>
-              <v-list-item-subtitle>{{ t('setting.allowPrereleaseDescription') }}</v-list-item-subtitle>
-            </v-list-item-content>
-        </v-list-item>-->
   </div>
 </template>
 <script lang="ts" setup>

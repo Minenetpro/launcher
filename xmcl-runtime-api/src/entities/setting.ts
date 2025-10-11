@@ -46,9 +46,6 @@ export class Settings implements SettingSchema {
 
   updateInfo: ReleaseInfo | null = null
   updateStatus: 'ready' | 'none' | 'pending' = 'none'
-  allowPrerelease = false
-  autoInstallOnAppQuit = false
-  autoDownload = false
   enableDedicatedGPUOptimization = true
   apiSetsPreference: 'mojang' | 'bmcl' | '' = ''
   apiSets = [{ name: 'bmcl', url: 'https://bmclapi2.bangbang93.com' }]
@@ -75,9 +72,6 @@ export class Settings implements SettingSchema {
 
   config(config: SettingSchema) {
     this.locale = config.locale
-    this.autoDownload = config.autoDownload || false
-    this.autoInstallOnAppQuit = config.autoDownload || false
-    this.allowPrerelease = config.allowPrerelease || false
     this.apiSetsPreference = config.apiSetsPreference
     this.httpProxy = config.httpProxy
     this.httpProxyEnabled = config.httpProxyEnabled
@@ -148,20 +142,8 @@ export class Settings implements SettingSchema {
     this.httpProxyEnabled = enabled
   }
 
-  allowPrereleaseSet(allowPrerelease: boolean) {
-    if (typeof allowPrerelease === 'boolean') { this.allowPrerelease = allowPrerelease }
-  }
-
-  autoInstallOnAppQuitSet(autoInstallOnAppQuit: boolean) {
-    if (typeof autoInstallOnAppQuit === 'boolean') this.autoInstallOnAppQuit = autoInstallOnAppQuit
-  }
-
   updateStatusSet(updateStatus: 'ready' | 'none' | 'pending') {
     this.updateStatus = updateStatus
-  }
-
-  autoDownloadSet(autoDownload: boolean) {
-    if (typeof autoDownload === 'boolean') this.autoDownload = autoDownload
   }
 
   updateInfoSet(updateInfo: ReleaseInfo) {

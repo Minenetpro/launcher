@@ -6,21 +6,6 @@
             "default": "",
             "type": "string"
         },
-        "autoDownload": {
-            "description": "Should launcher auto download new update",
-            "default": false,
-            "type": "boolean"
-        },
-        "autoInstallOnAppQuit": {
-            "description": "Should launcher auto install new update after app quit",
-            "default": false,
-            "type": "boolean"
-        },
-        "allowPrerelease": {
-            "description": "Should launcher show the pre-release",
-            "default": false,
-            "type": "boolean"
-        },
         "apiSetsPreference": {
             "description": "The download API set preferences",
             "default": "",
@@ -195,12 +180,9 @@
         }
     },
     "required": [
-        "allowPrerelease",
         "allowTurn",
         "apiSets",
         "apiSetsPreference",
-        "autoDownload",
-        "autoInstallOnAppQuit",
         "developerMode",
         "disableTelemetry",
         "discordPresence",
