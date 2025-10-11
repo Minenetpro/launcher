@@ -132,15 +132,16 @@ export class ElectronUpdater implements LauncherAppUpdater {
   }
 
   async #getLatestVersion(): Promise<string> {
-    this.logger.log('Fetching latest version from GitHub')
-    const response = await this.app.fetch('https://raw.githubusercontent.com/Minenetpro/launcher/refs/heads/master/version')
+    this.logger.log('Fetching latest version from API')
+    const response = await this.app.fetch('https://www.minenet.pro/api/launcher/version')
     
     if (!response.ok) {
       throw new AnyError('UpdateError', `Failed to fetch version info: ${await response.text()}`, {}, { status: response.status })
     }
     
-    const version = (await response.text()).trim()
-    this.logger.log(`Latest version from GitHub: ${version}`)
+    const data = await response.json() as { release: string }
+    const version = data.release
+    this.logger.log(`Latest version from API: ${version}`)
     return version
   }
 
