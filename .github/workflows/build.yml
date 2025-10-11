@@ -343,8 +343,10 @@ jobs:
           root: "."
           stage: "release"
       - name: Create Tag
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/Minenetpro/launcher.git"
+          git remote set-url origin "https://x-access-token:${PAT_TOKEN}@github.com/Minenetpro/launcher.git"
           git config user.name wynn-dev
           git config user.email wynn@wynn.website
           git tag -f ${{ steps.prepare_release.outputs.tag }}
