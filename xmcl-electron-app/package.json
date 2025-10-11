@@ -2,7 +2,7 @@
     "name": "minenetpro",
     "private": true,
     "main": "./index.js",
-    "version": "0.1.0",
+    "version": "0.53.0",
     "author": "minenetpro",
     "description": "Minenet.pro desktop",
     "license": "MIT",
