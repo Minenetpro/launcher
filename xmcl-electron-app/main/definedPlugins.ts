@@ -1,4 +1,3 @@
-import { pluginAutoUpdate } from './pluginAutoUpdate'
 import { pluginIconProtocol } from './pluginIconProtocol'
 import { pluginNvdiaGPULinux } from './pluginNvdiaGPULinux'
 import { pluginPowerMonitor } from './pluginPowerMonitor'
@@ -35,7 +34,6 @@ import { definedServices } from './definedServices'
 
 export const definedPlugins: LauncherAppPlugin[] = [
   pluginDirectLaunch,
-  pluginAutoUpdate,
   pluginPowerMonitor,
   pluginIconProtocol,
   pluginApiFallback,

@@ -8,7 +8,6 @@
 // Set environment for development
 import { app } from 'electron'
 import install, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
-import { autoUpdater } from 'electron-updater'
 import 'source-map-support/register'
 import './index'
 
@@ -25,13 +24,6 @@ app.on('web-contents-created', (event, contents) => {
     }
   })
 })
-
-autoUpdater.setFeedURL({
-  provider: 'github',
-  repo: 'x-minecraft-launcher',
-  owner: 'voxelum',
-})
-autoUpdater.logger = null
 
 app.whenReady().then(() => {
   install(VUEJS_DEVTOOLS).then((v) => {
