@@ -28,6 +28,7 @@ import { pluginUserTokenStorage } from '@xmcl/runtime/user/pluginUserTokenStorag
 import { pluginYggdrasilApi } from '@xmcl/runtime/user/pluginYggdrasilApi'
 import { pluginYggdrasilHandler } from '@xmcl/runtime/yggdrasilServer/pluginYggdrasilHandler'
 import { pluginMinenetAuth } from '@xmcl/runtime/app/pluginMinenetAuth'
+import { pluginCurseforgeInstaller } from '@xmcl/runtime/app/pluginCurseforgeInstaller'
 
 import { LauncherAppPlugin } from '~/app'
 import { definedServices } from './definedServices'
@@ -71,6 +72,7 @@ export const definedPlugins: LauncherAppPlugin[] = [
   pluginModrinthAccess,
 
   pluginMinenetAuth,
+  pluginCurseforgeInstaller,
 
   pluginCommonProtocol,
 ]

@@ -4,7 +4,8 @@
     :multi-line="data.operations.length > 0"
     :top="true"
     :right="true"
-    class="select-none"
+    class="select-none notification-snackbar"
+    rounded="xl"
   >
     <v-icon
       v-if="data.level"
@@ -121,20 +122,24 @@ const { t } = useI18n()
 
 const levelText = computed(() => data.level === 'info' ? t('logLevel.info') : data.level === 'error' ? t('logLevel.error') : data.level === 'success' ? t('logLevel.success') : t('logLevel.warning'))
 
-// function handleNotification(payload: TaskLifeCyclePayload) {
-//   const handler = registry[payload.type]
-//   if (handler) {
-//     queue.value.push({ level: handler.level, title: handler.title(payload), more: handler.more, full: handler.full })
-//   } else {
-//     console.warn(`Cannot handle the notification ${payload.type}`)
-//   }
-// }
+function handleNotification(notification: any) {
+  queue.value.push(notification)
+}
+
+declare const notificationBridge: {
+  on(listener: (notification: any) => void): void
+  off(listener: (notification: any) => void): void
+}
+
 onMounted(() => {
-  // taskMonitor.on('task-start', handleNotification)
-  // ipc.on('notification', handleNotification)
+  if (typeof notificationBridge !== 'undefined') {
+    notificationBridge.on(handleNotification)
+  }
 })
 onUnmounted(() => {
-  // ipc.removeListener('notification', handleNotification)
+  if (typeof notificationBridge !== 'undefined') {
+    notificationBridge.off(handleNotification)
+  }
 })
 
 const icons = {
@@ -151,8 +156,16 @@ const colors = {
 }
 </script>
 
-<style>
-.v-snack__content {
+<style scoped>
+.notification-snackbar :deep(.v-snack__wrapper) {
+  background: rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.notification-snackbar :deep(.v-snack__content) {
   display: flex;
   padding-top: 0;
   padding-bottom: 4px;

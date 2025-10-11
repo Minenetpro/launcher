@@ -67,6 +67,7 @@ import {
   kLocalizedContent,
   useLocalizedContentControl,
 } from "@/composables/localizedContent";
+import { useNavigationBridge } from "@/composables/navigation";
 import { useNotifier } from "@/composables/notifier";
 import { kCompact } from "@/composables/scrollTop";
 import { kSettingsState } from "@/composables/setting";
@@ -165,6 +166,9 @@ const { isDark } = injection(kTheme);
 const { notify } = useNotifier();
 useDefaultErrorHandler(notify);
 useAuthProfileImportNotification(notify);
+
+// Navigation bridge
+useNavigationBridge();
 </script>
 
 <style scoped>

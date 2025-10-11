@@ -21,6 +21,9 @@ const props = defineProps<{ id: number }>()
 
 const { t, te } = useI18n()
 const projectId = computed(() => props.id)
+const route = useRoute()
+const autoInstall = computed(() => route.query.autoInstall === 'true')
+const preSelectedFileId = computed(() => route.query.fileId as string | undefined)
 
 const { data: proj, isValidating, mutate, error } = useSWRVModel(getCurseforgeProjectModel(projectId))
 const { getDateString } = useDateString()
@@ -212,6 +215,8 @@ async function getVersionDetail(version: StoreProjectVersion) {
     :loading-members="false"
     :team-error="undefined"
     :get-version-detail="getVersionDetail"
+    :auto-open-install="autoInstall"
+    :pre-selected-version-id="preSelectedFileId"
     @install="onInstall"
     @open="onOpen"
   />

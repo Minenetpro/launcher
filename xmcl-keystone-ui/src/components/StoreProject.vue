@@ -62,6 +62,7 @@
       :value="installDialog"
       :versions="versions || []"
       :get-version-detail="getVersionDetail"
+      :pre-selected-version-id="preSelectedVersionId"
       @load="emit('load')"
       @input="installDialog = false"
       @install="onInstallVersion"
@@ -114,6 +115,9 @@ const props = defineProps<{
   installing?: boolean
 
   getVersionDetail: (version: StoreProjectVersion) => Promise<StoreProjectVersionDetail>
+  
+  autoOpenInstall?: boolean
+  preSelectedVersionId?: string
 }>()
 
 const emit = defineEmits<{
@@ -133,4 +137,11 @@ const onInstallVersion = (v: StoreProjectVersion) => {
   installDialog.value = false
   emit('install', v)
 }
+
+// Auto-open install dialog if requested
+watch(() => props.autoOpenInstall, (autoOpen) => {
+  if (autoOpen && !props.installed) {
+    installDialog.value = true
+  }
+}, { immediate: true })
 </script>
