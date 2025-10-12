@@ -24,8 +24,38 @@ import { MarketType, findMatchedVersion, getAutoOrManuallJava, getAutoSelectedJa
 export const pluginCurseforgeInstaller: LauncherAppPlugin = (app) => {
   const logger = app.getLogger('CurseforgeInstaller')
 
+  // Allowed CORS origins
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'https://www.minenet.pro',
+    'http://www.minenet.pro',
+  ]
+
+  // Helper function to set CORS headers
+  const setCorsHeaders = (response: any, origin?: string) => {
+    if (origin && allowedOrigins.includes(origin)) {
+      response.headers['Access-Control-Allow-Origin'] = origin
+    } else if (!origin) {
+      // If no origin header, allow any (for direct browser access)
+      response.headers['Access-Control-Allow-Origin'] = '*'
+    }
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+  }
+
   app.protocol.registerHandler('xmcl', async ({ request, response }) => {
+    // Handle CORS preflight requests
+    if (request.method === 'OPTIONS') {
+      const origin = request.headers.origin as string
+      setCorsHeaders(response, origin)
+      response.status = 204
+      return
+    }
+
     if (request.url.pathname === '/curseforge/install') {
+      const origin = request.headers.origin as string
+      setCorsHeaders(response, origin)
       const projectId = request.url.searchParams.get('projectId')
       const fileId = request.url.searchParams.get('fileId')
       const icon = request.url.searchParams.get('icon')
@@ -33,6 +63,7 @@ export const pluginCurseforgeInstaller: LauncherAppPlugin = (app) => {
       const port = request.url.searchParams.get('port')
 
       if (!projectId || !fileId) {
+        setCorsHeaders(response, request.headers.origin as string)
         response.status = 400
         response.headers['content-type'] = 'application/json; charset=utf-8'
         response.body = JSON.stringify({
@@ -48,6 +79,7 @@ export const pluginCurseforgeInstaller: LauncherAppPlugin = (app) => {
       const portNum = port ? parseInt(port, 10) : undefined
 
       if (isNaN(projectIdNum) || isNaN(fileIdNum)) {
+        setCorsHeaders(response, request.headers.origin as string)
         response.status = 400
         response.headers['content-type'] = 'application/json; charset=utf-8'
         response.body = JSON.stringify({
@@ -58,6 +90,7 @@ export const pluginCurseforgeInstaller: LauncherAppPlugin = (app) => {
       }
 
       if (port && isNaN(portNum!)) {
+        setCorsHeaders(response, request.headers.origin as string)
         response.status = 400
         response.headers['content-type'] = 'application/json; charset=utf-8'
         response.body = JSON.stringify({
@@ -175,6 +208,23 @@ export const pluginCurseforgeInstaller: LauncherAppPlugin = (app) => {
                   ? `Launched "${existingInstance.name}" and connecting to ${server}${portNum ? ':' + portNum : ''}!`
                   : `Launched "${existingInstance.name}" successfully!`,
               })
+              
+              // Return success response for launch
+              setCorsHeaders(response, request.headers.origin as string)
+              response.status = 200
+              response.headers['content-type'] = 'application/json; charset=utf-8'
+              response.body = JSON.stringify({
+                success: true,
+                action: 'launched',
+                message: 'Game launched successfully',
+                instance: {
+                  name: existingInstance.name,
+                  path: existingInstance.path,
+                },
+                projectId: projectIdNum,
+                fileId: fileIdNum,
+                server: server ? { host: server, port: portNum || 25565 } : undefined,
+              })
             } catch (e) {
               const error = e instanceof Error ? e : new Error(String(e))
               logger.error(error, 'CurseforgeInstaller')
@@ -184,6 +234,18 @@ export const pluginCurseforgeInstaller: LauncherAppPlugin = (app) => {
                 level: 'error',
                 title: 'Launch Failed',
                 body: error.message,
+              })
+              
+              // Return error response
+              setCorsHeaders(response, request.headers.origin as string)
+              response.status = 500
+              response.headers['content-type'] = 'application/json; charset=utf-8'
+              response.body = JSON.stringify({
+                success: false,
+                action: 'launch_failed',
+                error: error.message,
+                projectId: projectIdNum,
+                fileId: fileIdNum,
               })
             }
 
@@ -215,7 +277,21 @@ export const pluginCurseforgeInstaller: LauncherAppPlugin = (app) => {
           // Bring the launcher window to focus
           app.controller.requireFocus()
           
-          return { opened: true, projectId: projectIdNum, fileId: fileIdNum }
+          // Return success response for opening modpack page
+          setCorsHeaders(response, request.headers.origin as string)
+          response.status = 200
+          response.headers['content-type'] = 'application/json; charset=utf-8'
+          response.body = JSON.stringify({
+            success: true,
+            action: 'opened',
+            message: 'Modpack page opened in launcher',
+            projectId: projectIdNum,
+            fileId: fileIdNum,
+            server: server ? { host: server, port: portNum || 25565 } : undefined,
+            note: 'The modpack page has been opened in the launcher. Please complete the installation manually.'
+          })
+          
+          return
         } catch (e) {
           const error = e instanceof Error ? e : new Error(String(e))
           logger.error(error, 'CurseforgeInstaller')
@@ -223,8 +299,20 @@ export const pluginCurseforgeInstaller: LauncherAppPlugin = (app) => {
           // Broadcast error notification to UI
           app.controller.broadcast('notification', {
             level: 'error',
-            title: 'Modpack Installation Failed',
+            title: 'Failed to Process Request',
             body: error.message,
+          })
+          
+          // Return error response
+          setCorsHeaders(response, request.headers.origin as string)
+          response.status = 500
+          response.headers['content-type'] = 'application/json; charset=utf-8'
+          response.body = JSON.stringify({
+            success: false,
+            action: 'error',
+            error: error.message,
+            projectId: projectIdNum,
+            fileId: fileIdNum,
           })
         }
       })().catch((e) => {
@@ -232,23 +320,14 @@ export const pluginCurseforgeInstaller: LauncherAppPlugin = (app) => {
         const error = e instanceof Error ? e : new Error(String(e))
         logger.error(error, 'CurseforgeInstaller')
       })
-
-      // Return immediately with acknowledgment
-      response.status = 202 // 202 Accepted - request accepted for processing
-      response.headers['content-type'] = 'application/json; charset=utf-8'
-      response.body = JSON.stringify({
-        success: true,
-        message: 'Modpack installation started',
-        projectId: projectIdNum,
-        fileId: fileIdNum,
-        status: 'installing',
-        note: 'Installation is running in the background. Check the launcher logs for progress.'
-      })
+      
       return
     }
 
     // Add a status/info endpoint
     if (request.url.pathname === '/curseforge/info') {
+      const origin = request.headers.origin as string
+      setCorsHeaders(response, origin)
       response.status = 200
       response.headers['content-type'] = 'application/json; charset=utf-8'
       response.body = JSON.stringify({
