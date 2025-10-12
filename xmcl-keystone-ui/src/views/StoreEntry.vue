@@ -239,8 +239,8 @@ const popularItems = computed(() => {
   }
   function getGameGalleryFromCurseforge(mods: Mod[]) {
     return mods.map((p) => {
-      const images = p.screenshots.map(g => [g.thumbnailUrl, g.url]) as [string, string][]
-      if (p.logo) {
+      const images = p.screenshots.filter(g => g && g.thumbnailUrl).map(g => [g.thumbnailUrl, g.url]) as [string, string][]
+      if (p.logo && p.logo.thumbnailUrl) {
         images.push([p.logo.thumbnailUrl, p.logo.url])
       }
       const game: GameGallery = {
@@ -248,7 +248,7 @@ const popularItems = computed(() => {
         title: p.name,
         images,
         type: 'curseforge',
-        developer: p.authors[0].name,
+        developer: p.authors[0]?.name || 'Unknown',
         minecraft: p.latestFilesIndexes.map(f => f.gameVersion),
         categories: p.categories.map(c => tCategory(c.name)),
       }
@@ -299,7 +299,7 @@ const recentUpdatedItems = computed(() => {
       id: r.id.toString(),
       type: 'curseforge',
       title: r.name,
-      logo: r.logo.thumbnailUrl,
+      logo: r.logo?.thumbnailUrl || '',
       description: r.summary,
       updatedAt: r.dateModified,
       follows: r.downloadCount,
@@ -310,7 +310,10 @@ const recentUpdatedItems = computed(() => {
 })
 
 // Latest minecraft
-const latestModrinth = computed(() => gameVersions.value.filter(v => v.major)[0].version)
+const latestModrinth = computed(() => {
+  const majorVersions = gameVersions.value.filter(v => v.major)
+  return majorVersions.length > 0 ? majorVersions[0].version : ''
+})
 const { data: modrinthRecentMinecraft } = useSWRV('/modrinth/recent_version', async () => {
   const result = await clientModrinthV2.searchProjects({
     index: 'newest',
@@ -332,7 +335,7 @@ const recentMinecraftItems = computed(() => {
       title: r.title,
       type: 'modrinth',
       id: r.project_id,
-      image: r.icon_url || r.gallery[0],
+      image: r.icon_url || (r.gallery.length > 0 ? r.gallery[0] : ''),
       gameVersion: latestModrinth.value,
       categories: r.categories.map(c => t(`modrinth.categories.${c}`, c)),
     })),
@@ -340,8 +343,8 @@ const recentMinecraftItems = computed(() => {
       id: r.id.toString(),
       type: 'curseforge',
       title: r.name,
-      image: r.logo.thumbnailUrl,
-      gameVersion: r.latestFilesIndexes[0]?.gameVersion,
+      image: r.logo?.thumbnailUrl || '',
+      gameVersion: r.latestFilesIndexes[0]?.gameVersion || '',
       categories: r.categories.map(c => tCategory(c.name)),
     })),
   )
@@ -372,7 +375,7 @@ watch([ftbData, page], async ([packs, page]) => {
       title: data?.name ?? '',
       icon_url: data?.art.find(v => v.type === 'square')?.url ?? '',
       description: data?.synopsis || '',
-      author: data?.authors[0].name ?? '',
+      author: data?.authors?.[0]?.name ?? 'Unknown',
       labels: [
         { icon: 'file_download', text: getExpectedSize(data?.installs ?? 0, ''), id: `${data?.id}_download_icon` },
         { icon: 'event', text: getDateString((data?.released ?? 0) * 1000), id: `${data?.id}_event_icon` },
@@ -462,17 +465,17 @@ const items = computed(() => {
       id: p.id.toString(),
       type: 'curseforge',
       title: p.name,
-      icon_url: p.logo.thumbnailUrl,
+      icon_url: p.logo?.thumbnailUrl || '',
       description: p.summary,
-      author: p.authors[0].name,
+      author: p.authors[0]?.name || 'Unknown',
       labels: [
         { icon: 'file_download', text: getExpectedSize(p.downloadCount, ''), id: `${p.id}_download_icon` },
         { icon: 'event', text: getDateString(p.dateModified), id: `${p.id}_event_icon` },
         { icon: 'edit', text: getDateString(p.dateModified), id: `${p.id}_edit_icon` },
-        { icon: 'local_offer', text: p.latestFilesIndexes[0].gameVersion, id: `${p.id}_local_offer` },
+        { icon: 'local_offer', text: p.latestFilesIndexes[0]?.gameVersion || '', id: `${p.id}_local_offer` },
       ],
       tags,
-      gallery: p.screenshots.map(s => s.thumbnailUrl),
+      gallery: p.screenshots.filter(s => s && s.thumbnailUrl).map(s => s.thumbnailUrl),
     }
     return mapped
   })
