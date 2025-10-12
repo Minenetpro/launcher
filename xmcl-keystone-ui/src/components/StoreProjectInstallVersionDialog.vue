@@ -303,27 +303,15 @@ watch(() => props.value, (newVal) => {
 
 // Watch for when dialog is open, versions are loaded, and we have a preSelectedVersionId
 watch([() => props.value, () => props.versions, () => props.preSelectedVersionId], ([isOpen, versions, versionId]) => {
-  console.log('[StoreProjectInstallVersionDialog] Watch triggered:', {
-    isOpen,
-    versionsCount: versions.length,
-    versionId,
-    hasAutoSelected: hasAutoSelected.value,
-    allVersionIds: versions.map(v => v.id)
-  })
-  
   if (isOpen && versionId && versions.length > 0 && !hasAutoSelected.value) {
     // Auto-select the pre-selected version
     const version = versions.find(v => v.id === versionId)
-    console.log('[StoreProjectInstallVersionDialog] Found version:', version)
     
     if (version) {
       hasAutoSelected.value = true
       nextTick(() => {
-        console.log('[StoreProjectInstallVersionDialog] Auto-clicking version:', version.name)
         onVersionClicked(version)
       })
-    } else {
-      console.warn('[StoreProjectInstallVersionDialog] Version not found with id:', versionId)
     }
   }
 }, { immediate: true })
